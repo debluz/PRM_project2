@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PRM_project2</string>
+    <string name="facebook_application_id">274583213883631</string>
+    <string name="fb_login_protocol_scheme">fb274583213883631</string>
 </resources>
