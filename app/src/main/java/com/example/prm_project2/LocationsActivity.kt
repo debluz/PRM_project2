@@ -71,6 +71,6 @@ class LocationsActivity : AppCompatActivity(), OnItemListener {
     }
 
     fun addLocation(view: View) {
-        startActivity(Intent())
+        startActivity(Intent(this, AddLocationActivity::class.java))
     }
 }
