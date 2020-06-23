@@ -7,6 +7,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import java.util.jar.Manifest
@@ -25,6 +27,7 @@ class LocationSelectActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastLocation: Task<Location>
+    lateinit var marker: Marker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +40,6 @@ class LocationSelectActivity : AppCompatActivity(), OnMapReadyCallback {
         
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
 
         /*val returnIntent = Intent().apply {
             putExtra("latitude", -34.0)
@@ -61,6 +63,7 @@ class LocationSelectActivity : AppCompatActivity(), OnMapReadyCallback {
         getCurrentLocation()
     }
 
+
     fun getCurrentLocation(){
         if(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 0)
@@ -74,10 +77,17 @@ class LocationSelectActivity : AppCompatActivity(), OnMapReadyCallback {
                         mMap.moveCamera(CameraUpdateFactory
                             .newLatLngZoom(
                                 LatLng(taskResult.latitude, taskResult.longitude),
-                                10.0F
+                                15.0F
                             )
                         )
-                        mMap.addMarker(MarkerOptions().position(LatLng(taskResult.latitude, taskResult.longitude)).title("Current position").draggable(true))
+                        mMap.addMarker(MarkerOptions().position(LatLng(taskResult.latitude, taskResult.longitude)).title("Current position")).apply {
+                            marker = this
+                        }
+                        mMap.uiSettings.isZoomControlsEnabled = true
+                        mMap.setOnMapClickListener {
+                            marker.position = it
+                            marker.title = "Chosen position"
+                        }
                     } else {
                         Log.d("LocationSelect", "Current location is null. Using defaults.");
                         Log.e("LocationSelect", "Exception: %s", it.exception);
@@ -87,6 +97,8 @@ class LocationSelectActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
     }
+
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -99,5 +111,31 @@ class LocationSelectActivity : AppCompatActivity(), OnMapReadyCallback {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
             finish()
         }
+    }
+
+    fun resetPosition(view: View) {
+        lastLocation.addOnCompleteListener {
+            val taskResult = it.result
+            if (taskResult != null) {
+                mMap.moveCamera(
+                    CameraUpdateFactory
+                        .newLatLngZoom(
+                            LatLng(taskResult.latitude, taskResult.longitude),
+                            15.0F
+                        )
+                )
+                marker.position = LatLng(taskResult.latitude, taskResult.longitude)
+                marker.title = "Current position"
+            }
+        }
+    }
+
+    fun confirmPosition(view: View) {
+        val intent = Intent().apply {
+            putExtra("Lat", marker.position.latitude)
+            putExtra("Long", marker.position.longitude)
+        }
+        setResult(10, intent)
+        finish()
     }
 }

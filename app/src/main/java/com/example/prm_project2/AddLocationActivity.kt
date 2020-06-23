@@ -3,6 +3,7 @@ package com.example.prm_project2
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.example.prm_project2.db.VisitedLocation
 import com.google.firebase.auth.FirebaseUser
@@ -44,7 +45,19 @@ class AddLocationActivity : AppCompatActivity() {
     }
 
     fun setLocation(view: View) {
-        startActivity(Intent(this, LocationSelectActivity::class.java))
-        //startActivityForResult(Intent(this, LocationSelectActivity::class.java), 10)
+        startActivityForResult(Intent(this, LocationSelectActivity::class.java), 10)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 10 && resultCode == 10){
+            if(data != null){
+                val lat = data.getDoubleExtra("Lat", 0.0)
+                val long = data.getDoubleExtra("Long", 0.0)
+                Log.d("ActivityResult", "lat: $lat long: $long")
+                latitudeText.setText(lat.toString())
+                longitudeText.setText(long.toString())
+            }
+        }
     }
 }
