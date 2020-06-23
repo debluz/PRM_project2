@@ -11,13 +11,13 @@
         android:layout_width="220dp"
         android:layout_height="230dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar3"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_photo" />
 
@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:text="Upload photo"
+        android:onClick="uploadPhoto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -52,7 +53,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="nazwa"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,10 +87,11 @@
 
     <EditText
         android:id="@+id/latitudeText"
-        android:layout_width="120"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="number"
+        android:hint="lat"
+        android:inputType="numberSigned|numberDecimal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/longitudeText"
         app:layout_constraintHorizontal_bias="0.0"
@@ -103,7 +104,8 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="number"
+        android:hint="long"
+        android:inputType="numberSigned|numberDecimal"
         app:layout_constraintBottom_toBottomOf="@+id/latitudeText"
         app:layout_constraintEnd_toEndOf="@+id/button"
         app:layout_constraintTop_toTopOf="@+id/latitudeText" />
@@ -124,7 +126,8 @@
         android:layout_width="85dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="number"
+        android:hint="km"
+        android:inputType="numberDecimal"
         app:layout_constraintBottom_toBottomOf="@+id/locationNameText"
         app:layout_constraintEnd_toEndOf="@+id/textView4"
         app:layout_constraintHorizontal_bias="1.0"
@@ -146,7 +149,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/editTextTextMultiLine"
+        android:id="@+id/descriptionText"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -161,6 +164,62 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#4F87C1"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/appCompatImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/fui_transparent"
+                android:src="@drawable/ic_close"
+                android:onClick="declineNew"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:background="@color/fui_transparent"
+                android:src="@drawable/ic_confirm"
+                android:onClick="confirmNew"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/appCompatImageButton"
+                app:layout_constraintTop_toTopOf="@+id/appCompatImageButton" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="set location"
+        android:onClick="setLocation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/button"
+        app:layout_constraintStart_toStartOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/button"
         app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
