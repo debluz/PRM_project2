@@ -34,6 +34,8 @@ class LocationSelectActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        
+
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
 
