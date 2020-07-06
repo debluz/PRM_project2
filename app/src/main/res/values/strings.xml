@@ -4,4 +4,9 @@
     <string name="fb_login_protocol_scheme">fb274583213883631</string>
     <string name="title_activity_location_select">Map</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="geofences_added">Clue Geofence added.</string>
+    <string name="geofences_removed">Geofences removed.</string>
+    <string name="geofence_entered">Geofence entered.</string>
+    <string name="geofence_over">You have found the treasure! Congratulations!</string>
 </resources>

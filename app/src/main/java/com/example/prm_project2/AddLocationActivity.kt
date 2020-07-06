@@ -44,6 +44,7 @@ class AddLocationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_location)
         db = Firebase.firestore
+        descriptionText.setText("")
     }
 
     fun confirmNew(view: View) {
@@ -58,38 +59,40 @@ class AddLocationActivity : AppCompatActivity() {
             }
         }
         Log.d("UploadPhoto", "imageRef: ${imageRef.toString()}")*/
-
-        if(this::photo.isInitialized){
-            Log.d("UploadPhoto", "photoUri (local): ${Uri.fromFile(photo)}")
-            val photoUri = Uri.fromFile(photo)
-            newLocation = VisitedLocation(
-                null,
-                latitudeText.text.toString().toDouble(),
-                longitudeText.text.toString().toDouble(),
-                locationNameText.text.toString(),
-                locationDiameterText.text.toString().toDouble(),
-                photoUri.toString(),
-                descriptionText.text.toString()
-            )
+        if(checkIfEmpty()){
+            Toast.makeText(this, "Fill in empty fields! (Description is optional)", Toast.LENGTH_SHORT).show()
         } else {
-            newLocation = VisitedLocation(
-                null,
-                latitudeText.text.toString().toDouble(),
-                longitudeText.text.toString().toDouble(),
-                locationNameText.text.toString(),
-                locationDiameterText.text.toString().toDouble(),
-                null,
-                descriptionText.text.toString()
-            )
-        }
+            if(this::photo.isInitialized){
+                Log.d("UploadPhoto", "photoUri (local): ${Uri.fromFile(photo)}")
+                val photoUri = Uri.fromFile(photo)
+                newLocation = VisitedLocation(
+                    null,
+                    latitudeText.text.toString().toDouble(),
+                    longitudeText.text.toString().toDouble(),
+                    locationNameText.text.toString(),
+                    locationDiameterText.text.toString().toDouble(),
+                    photoUri.toString(),
+                    descriptionText.text.toString()
+                )
+            } else {
+                newLocation = VisitedLocation(
+                    null,
+                    latitudeText.text.toString().toDouble(),
+                    longitudeText.text.toString().toDouble(),
+                    locationNameText.text.toString(),
+                    locationDiameterText.text.toString().toDouble(),
+                    null,
+                    descriptionText.text.toString()
+                )
+            }
 
-        val user = Firebase.auth.currentUser
-        if(user != null){
-            db.collection("users").document(user.uid).collection("locations").add(newLocation)
-            finish()
-            startActivity(Intent(this@AddLocationActivity, LocationsActivity::class.java))
+            val user = Firebase.auth.currentUser
+            if(user != null){
+                db.collection("users").document(user.uid).collection("locations").add(newLocation)
+                finish()
+                startActivity(Intent(this@AddLocationActivity, LocationsActivity::class.java))
+            }
         }
-
     }
 
 
@@ -132,6 +135,9 @@ class AddLocationActivity : AppCompatActivity() {
                 val rotatedBitmap = Bitmap.createBitmap(inputBitmap, 0, 0, inputBitmap.width, inputBitmap.height,  matrix, true)
                 imageView.setImageBitmap(rotatedBitmap)
             }
+        } else if ( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_CANCELED){
+            photo.delete()
+            Log.d("DeleteUpload2", "Deleted photo: ${photo.name}")
         }
     }
 
@@ -158,6 +164,13 @@ class AddLocationActivity : AppCompatActivity() {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    fun checkIfEmpty(): Boolean{
+        return locationNameText.text.isNullOrEmpty() ||
+                locationDiameterText.text.isNullOrEmpty() ||
+                latitudeText.text.isNullOrEmpty() ||
+                longitudeText.text.isNullOrEmpty()
     }
 
 

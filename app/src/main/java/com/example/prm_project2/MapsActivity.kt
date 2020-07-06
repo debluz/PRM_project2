@@ -1,9 +1,21 @@
 package com.example.prm_project2
 
+import android.Manifest
+import android.annotation.TargetApi
+import android.content.Intent
+import android.content.IntentSender
+import android.content.pm.PackageManager
+import android.location.Location
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.example.prm_project2.db.VisitedLocation
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -12,11 +24,13 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var selectedLocations: List<VisitedLocation>
     private lateinit var allLocations: List<VisitedLocation>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +50,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         } else if (this::allLocations.isInitialized){
             Log.d("ShowMap", "Sent locations size: ${allLocations.size}")
         }
-
     }
+
+
+
 
     /**
      * Manipulates the map once available.

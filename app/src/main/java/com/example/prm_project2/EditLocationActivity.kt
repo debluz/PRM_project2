@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.example.prm_project2.db.VisitedLocation
 import com.google.firebase.auth.ktx.auth
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_add_location.*
 import kotlinx.android.synthetic.main.activity_edit_location.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -101,44 +103,63 @@ class EditLocationActivity : AppCompatActivity() {
     }
 
     fun confirmEdit(view: View) {
-        lateinit var newLocation: VisitedLocation
-        var inputBitmap: Bitmap? = null
-        photo.inputStream().use {
-            inputBitmap = BitmapFactory.decodeStream(it)
-        }
-        Log.d("UploadPhoto0", inputBitmap.toString())
-        if(this::photo.isInitialized && inputBitmap != null){
-            Log.d("UploadPhoto1", "photoUri (local): ${Uri.fromFile(photo)}")
-            val photoUri = Uri.fromFile(photo)
-            newLocation = VisitedLocation(
-                myLocation.locationId,
-                edit_latitudeText.text.toString().toDouble(),
-                edit_longitudeText.text.toString().toDouble(),
-                edit_locationNameText.text.toString(),
-                edit_locationDiameterText.text.toString().toDouble(),
-                photoUri.toString(),
-                edit_descriptionText.text.toString()
-            )
-        } else {
-            Log.d("UploadPhoto2", "photoUri (local): ${myLocation.photoUri}")
-            newLocation = VisitedLocation(
-                myLocation.locationId,
-                edit_latitudeText.text.toString().toDouble(),
-                edit_longitudeText.text.toString().toDouble(),
-                edit_locationNameText.text.toString(),
-                edit_locationDiameterText.text.toString().toDouble(),
-                myLocation.photoUri,
-                edit_descriptionText.text.toString()
-            )
-        }
+            lateinit var newLocation: VisitedLocation
+            var inputBitmap: Bitmap? = null
+            if(this::photo.isInitialized) {
+                photo.inputStream().use {
+                    inputBitmap = BitmapFactory.decodeStream(it)
+                }
+                Log.d("UploadPhoto0", inputBitmap.toString())
+                if(inputBitmap != null){
+                    Log.d("UploadPhoto1", "photoUri (local): ${Uri.fromFile(photo)}")
+                    val photoUri = Uri.fromFile(photo)
+                    newLocation = VisitedLocation(
+                        myLocation.locationId,
+                        edit_latitudeText.text.toString().toDouble(),
+                        edit_longitudeText.text.toString().toDouble(),
+                        edit_locationNameText.text.toString(),
+                        edit_locationDiameterText.text.toString().toDouble(),
+                        photoUri.toString(),
+                        edit_descriptionText.text.toString()
+                    )
+                } else {
+                    newLocation = VisitedLocation(
+                        myLocation.locationId,
+                        edit_latitudeText.text.toString().toDouble(),
+                        edit_longitudeText.text.toString().toDouble(),
+                        edit_locationNameText.text.toString(),
+                        edit_locationDiameterText.text.toString().toDouble(),
+                        myLocation.photoUri,
+                        edit_descriptionText.text.toString()
+                    )
+                }
+            } else {
+                newLocation = VisitedLocation(
+                    myLocation.locationId,
+                    edit_latitudeText.text.toString().toDouble(),
+                    edit_longitudeText.text.toString().toDouble(),
+                    edit_locationNameText.text.toString(),
+                    edit_locationDiameterText.text.toString().toDouble(),
+                    myLocation.photoUri,
+                    edit_descriptionText.text.toString()
+                )
+            }
 
-        var user = Firebase.auth.currentUser
-        if(user != null){
-            db.collection("users").document(user.uid).collection("locations").document(myLocation.locationId.toString()).set(newLocation, SetOptions.merge())
-        }
-        finish()
-        startActivity(Intent(this@EditLocationActivity, LocationsActivity::class.java))
+            var user = Firebase.auth.currentUser
+            if(user != null){
+                db.collection("users").document(user.uid).collection("locations").document(myLocation.locationId.toString()).set(newLocation, SetOptions.merge())
+            }
+            finish()
+            startActivity(Intent(this@EditLocationActivity, LocationsActivity::class.java))
 
+
+    }
+
+    fun checkIfEmpty(): Boolean{
+        return locationNameText.text.isNullOrEmpty() ||
+                locationDiameterText.text.isNullOrEmpty() ||
+                latitudeText.text.isNullOrEmpty() ||
+                longitudeText.text.isNullOrEmpty()
     }
 
 
@@ -168,7 +189,8 @@ class EditLocationActivity : AppCompatActivity() {
         } else if( requestCode == AddLocationActivity.REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_CANCELED){
             Log.d("PhotoUpload", "Result canceled")
             Log.d("PhotoUpload", photo.name)
-
+            photo.delete()
+            Log.d("DeleteUpload", "photo ${photo.name}")
             if(myLocation.photoUri != null){
                 val uri = Uri.parse(myLocation.photoUri)
                 val photo: File = File(uri.path)
